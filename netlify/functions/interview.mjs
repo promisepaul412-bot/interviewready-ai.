@@ -32,7 +32,20 @@ const {answer,history}=body||{};
 const stage=Number(body?.stage);
 const followCount=Number(body?.followCount);
  if(typeof answer!=='string'||answer.trim().length<2||answer.length>3500)return json({error:'Enter an answer between 2 and 3,500 characters.'},400);
- if(!Number.isInteger(stage)||stage<0||stage>6||!![0,1,2,3].includes(followCount))return json({error:'Invalid interview progress.'},400);
+ 
+if (!Number.isInteger(stage) || stage < 0 || stage > 6 || ![0,1,2,3].includes(followCount)) {
+  return json({
+    error: 'Invalid interview progress.',
+    diagnostic: {
+      stageValue: stage,
+      stageType: typeof stage,
+      followCountValue: followCount,
+      followCountType: typeof followCount,
+      stageValid: Number.isInteger(stage) && stage >= 0 && stage <= 6,
+      followCountValid: [0,1,2,3].includes(followCount)
+    }
+  }, 400);
+}
  if(!Array.isArray(history)||history.length>20||history.some(x=>!x||!['candidate','interviewer'].includes(x.role)||typeof x.text!=='string'||x.text.length>4000))return json({error:'Invalid conversation history.'},400);
  const industry=industries[body.industry]||industries.general;
  const difficulty=difficulties.includes(body.difficulty)?body.difficulty:'balanced';
