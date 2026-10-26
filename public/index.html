@@ -42,7 +42,7 @@ async function send(){
  const text=$('answer').value.trim();if(!text)return;
  stopRecognition();window.speechSynthesis?.cancel();$('answer').value='';
  const history=records.map(r=>({role:r.who==='you'?'candidate':'interviewer',text:r.text})).slice(-18);
- addMessage(text,'you'); const record=records[records.length-1];record.analysis=analyse(text,scenarios[stage]);record.stage=stage;record.follow=followUsed;
+ addMessage(text,'you'); const record=records[records.length-1];record.analysis=analyse(text,scenarios[stage]);record.stage=stage;record.record.follow=followCount;
  busy=true;$('send').disabled=true;typing(true);$('voiceStatus').textContent='Sarah is considering your answer…';
  try{
   const response=await fetch('/.netlify/functions/interview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({answer:text,history,stage,followCount:Math.min(3,followCount),industry:app.industry,difficulty:app.difficulty})});
