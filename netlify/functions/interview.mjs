@@ -27,7 +27,10 @@ export default async function(request){
  const size=Number(request.headers.get('content-length')||0);
  if(size>25000)return json({error:'Request too large.'},413);
  let body;try{const raw=await request.text();if(raw.length>25000)return json({error:'Request too large.'},413);body=JSON.parse(raw)}catch{return json({error:'Invalid JSON.'},400)}
- const {answer,stage,followCount,history}=body||{};
+
+const {answer,history}=body||{};
+const stage=Number(body?.stage);
+const followCount=Number(body?.followCount);
  if(typeof answer!=='string'||answer.trim().length<2||answer.length>3500)return json({error:'Enter an answer between 2 and 3,500 characters.'},400);
  if(!Number.isInteger(stage)||stage<0||stage>6||!![0,1,2,3].includes(followCount))return json({error:'Invalid interview progress.'},400);
  if(!Array.isArray(history)||history.length>20||history.some(x=>!x||!['candidate','interviewer'].includes(x.role)||typeof x.text!=='string'||x.text.length>4000))return json({error:'Invalid conversation history.'},400);
