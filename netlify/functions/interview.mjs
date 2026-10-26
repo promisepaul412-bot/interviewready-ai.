@@ -79,7 +79,9 @@ Current stage=${stage}, followCount=${followCount}. Next competency when advanci
  try{
   const model=process.env.GEMINI_MODEL||'gemini-2.5-flash';
   if(!/^gemini-[a-zA-Z0-9.-]+$/.test(model))return json({error:'Invalid Gemini model setting.'},500);
-  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,{method:'POST',signal:controller.signal,headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify({systemInstruction:{parts:[{text:instruction}]},contents:messages,generationConfig:{responseMimeType:'application/json',temperature:0.65,maxOutputTokens:600}})});
+  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,{method:'POST',signal:controller.signal,headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify({systemInstruction:{parts:[{text:instruction}]},contents:messages,
+generationConfig:{responseMimeType:'application/json',maxOutputTokens:350}})});
+
   if(!r.ok){console.error('Gemini request failed',r.status);return json({error:r.status===429?'Gemini usage limit reached. Try again later.':r.status===404?'Gemini model unavailable. Check GEMINI_MODEL.':'Gemini service error ('+r.status+').'},502)}
   const result=await r.json();const raw=(result.candidates?.[0]?.content?.parts||[]).map(p=>p.text||'').join('');
   let parsed;try{parsed=JSON.parse(raw)}catch{return json({error:'Gemini returned an unexpected response. Retry.'},502)}
