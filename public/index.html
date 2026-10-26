@@ -60,7 +60,7 @@ records.push(record);
 
  busy=true;$('send').disabled=true;typing(true);$('voiceStatus').textContent='Sarah is considering your answer…';
  try{
-  const response=await fetch('/.netlify/functions/interview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({answer:text,history,stage:Number(stage),followCount:Number(followCount):Math.min(3,followCount),industry:app.industry,difficulty:app.difficulty})});
+  const response=await fetch('/.netlify/functions/interview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({answer:text,history,stage:Number(stage),followCount:Math.min(3,Number(followCount)),industry:app.industry,difficulty:app.difficulty})});
   const data=await response.json().catch(()=>({}));
   if(!response.ok||typeof data.reply!=='string'||!data.reply.trim())throw Error(data.error||'AI service unavailable');
   typing(false);addMessage(data.reply,'sarah');speak(data.reply);
